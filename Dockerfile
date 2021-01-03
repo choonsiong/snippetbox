@@ -4,6 +4,7 @@ ENV GO_INSTALL_DIR=/usr/local/go
 
 RUN set -ex; \
     apt-get update && apt-get install -y vim curl wget; \
+    apt-get clean; \
     mkdir -p "$HOME/go/src" "$HOME"/go/pkg "$HOME"/go/bin; \
     mkdir -p /app /app/cmd/web /app/ui/html /app/ui/static/css /app/ui/static/img /app/ui/static/js
 
@@ -17,6 +18,7 @@ RUN set -ex; \
     echo "GOBIN=$GO_INSTALL_DIR/bin" >> /root/.bashrc; \
     echo "PATH=$PATH:$GO_INSTALL_DIR/bin" >> /root/.bashrc
 
+# Copy snippetbox resources to the container
 WORKDIR /app
 COPY cmd/web/*.go cmd/web/
 COPY ui/html/*.tmpl ui/html/
@@ -25,8 +27,8 @@ COPY ui/static/img/* ui/static/img/
 COPY ui/static/js/main.js ui/static/js/main.js
 
 RUN set -ex; \
-    /usr/local/go/bin/go build -o snippet cmd/web/*.go 
+    /usr/local/go/bin/go build -o snippetbox cmd/web/*.go
     
 EXPOSE 4000
 
-CMD ["./snippet"]
+CMD ["./snippetbox"]
