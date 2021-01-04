@@ -10,6 +10,7 @@ func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
+		log.Println("$PORT is not defined, set to 4000")
 		port = "4000"
 	}
 
