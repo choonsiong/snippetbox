@@ -3,9 +3,16 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", home)
@@ -15,7 +22,7 @@ func main() {
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	log.Println("Starting server on :4000")
-	err := http.ListenAndServe(":4000", mux)
+	log.Println("Starting server on :" + port)
+	err := http.ListenAndServe(":" + port, mux)
 	log.Fatal(err)
 }
