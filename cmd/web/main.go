@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	// For heroku deployment
 	port := os.Getenv("PORT")
 
 	if port == "" {

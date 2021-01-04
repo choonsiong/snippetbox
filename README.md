@@ -27,5 +27,16 @@ Digest: sha256:f39ffac7226dada503932ecaa8fc498a82bda869cc2f674f8f3a0115e073ed95
 Status: Downloaded newer image for choonsiong/snippetbox:latest
 2021/01/03 20:51:10 Starting server on :4000
 ```
+### To deploy the app to heroku
+
+![https://devcenter.heroku.com/articles/getting-started-with-go](https://devcenter.heroku.com/articles/getting-started-with-go)
+
+Run below commands to have heroku generate your app url for automatically:
+
+```
+$ heroku login
+$ heroku create
+$ git push heroku master
+```
 
 ![image](image.png)
