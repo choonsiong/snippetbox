@@ -10,8 +10,14 @@ import (
 func main() {
 	cfg := new(Config)
 
+	// Create a logger for writing information messages.
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+
+	// Create a logger for writing error messages, use different flags to show file name
+	// and line number.
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
 	flag.StringVar(&cfg.Addr, "addr", ":4000", "HTTP network address:port")
-	flag.StringVar(&cfg.Port, "port", "4000", "HTTP network port")
 	flag.StringVar(&cfg.StaticDir, "static-dir", "./ui/static", "Path to static assets")
 
 	flag.Parse()
@@ -21,21 +27,13 @@ func main() {
 	port := os.Getenv("PORT")
 	var httpListenAddr = ""
 
-	if port == "" {
-		if cfg.Port != "" && cfg.Addr == "" {
-			// Check if user specify port from command-line
-			log.Printf("Environment variable $PORT is not defined, set http listening address to :%v", cfg.Port)
-			port = cfg.Port
-			httpListenAddr = ":" + port
-		} else if cfg.Addr != "" && cfg.Port == "" {
-			// Check if user specify network address instead
-			log.Printf("Environment variable $PORT is not defined, set http listening address to %v", cfg.Addr)
-			httpListenAddr = cfg.Addr
-		} else {
-			log.Fatal("Error: You can speficy either -addr or -port only")
-		}
+	if port != "" {
+		httpListenAddr = ":" + port
+	} else {
+		infoLog.Printf("Environment variable $PORT is not defined, set http listening address to %v", cfg.Addr)
+		httpListenAddr = cfg.Addr
 	}
-
+	
 	// Initialize a new servemux
 	mux := http.NewServeMux()
 
@@ -53,10 +51,12 @@ func main() {
 	// "/static" prefix before the request reaches the file server.
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	log.Printf("Starting server on %v", httpListenAddr)
+	//log.Printf("Starting server on %v", httpListenAddr)
+	infoLog.Printf("Starting server on %v", httpListenAddr)
 
 	// Note that any error returned by http.ListenAndServe() is always non-nil.
 	// :port will listen on all available network interfaces
 	err := http.ListenAndServe(httpListenAddr, mux)
-	log.Fatal(err)
+	//log.Fatal(err)
+	errorLog.Fatal(err)
 }
