@@ -1,6 +1,6 @@
 package main
 
-type Config struct {
-	Addr string
-	StaticDir string
+type config struct {
+	addr string
+	staticDir string
 }
