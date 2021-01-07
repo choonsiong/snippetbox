@@ -4,6 +4,8 @@ services:
   snippetbox:
     image: my-snippetbox
     build: .
+    ports:
+      - "4000:4000"
     networks:
       - my_net
   mysql:
