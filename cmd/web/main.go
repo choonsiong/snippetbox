@@ -41,7 +41,7 @@ func main() {
 	if port != "" {
 		httpListenAddr = ":" + port
 	} else {
-		infoLog.Printf("Environment variable $PORT is not defined, set http listening address to %v", cfg.addr)
+		infoLog.Printf("Environment variable $PORT is not defined, set http listening address to %v", app.config.addr)
 		httpListenAddr = app.config.addr
 	}
 
