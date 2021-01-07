@@ -9,7 +9,10 @@ services:
     networks:
       - my_net
   mysql:
-    image: mysql:5.7
+    image: my-mysql
+    build:
+      context: .
+      dockerfile: Dockerfile-mysql
     environment:
       - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_password
     secrets:
