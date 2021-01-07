@@ -1,10 +1,10 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
-	"flag"
 )
 
 func main() {
@@ -16,6 +16,13 @@ func main() {
 	// Create a logger for writing error messages, use different flags to show file name
 	// and line number.
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	// Initialize a new instance of application containing
+	// the dependencies.
+	app := &Application{
+		ErrorLog: errorLog,
+		InfoLog: infoLog,
+	}
 
 	flag.StringVar(&cfg.Addr, "addr", ":4000", "HTTP network address:port")
 	flag.StringVar(&cfg.StaticDir, "static-dir", "./ui/static", "Path to static assets")
@@ -37,9 +44,9 @@ func main() {
 	// Initialize a new servemux
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet", showSnippet)
-	mux.HandleFunc("/snippet/create", createSnippet)
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet", app.showSnippet)
+	mux.HandleFunc("/snippet/create", app.createSnippet)
 
 	// Create a file server which serves files out of the "./ui/static" directory.
 	// Note that the path given to the http.Dir() function is relative to the
@@ -53,10 +60,10 @@ func main() {
 
 	// Initialize a new http.Server struct. Use the custom errorLog logger
 	// in the event of any problems.
-	httpServ := &http.Server {
-		Addr: httpListenAddr,
+	httpServ := &http.Server{
+		Addr:     httpListenAddr,
 		ErrorLog: errorLog,
-		Handler: mux,
+		Handler:  mux,
 	}
 
 	//log.Printf("Starting server on %v", httpListenAddr)
