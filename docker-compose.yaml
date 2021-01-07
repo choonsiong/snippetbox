@@ -1,0 +1,26 @@
+version: '3.1'
+
+services:
+  snippetbox:
+    image: my-snippetbox
+    build: .
+    networks:
+      - my_net
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_password
+    secrets:
+      - mysql_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - my_net
+networks:
+  my_net:
+    driver: bridge
+secrets:
+  mysql_password:
+    file: ./mysql_password.txt
+volumes:
+  mysql-data:

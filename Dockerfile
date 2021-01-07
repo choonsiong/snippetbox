@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 ENV GO_INSTALL_DIR=/usr/local/go
 
 RUN set -ex; \
-    apt-get update && apt-get install -y vim curl wget; \
+    apt-get update && apt-get install -y curl iproute2 iputils-ping vim wget; \
     apt-get clean; \
     mkdir -p "$HOME/go/src" "$HOME"/go/pkg "$HOME"/go/bin; \
     mkdir -p /app /app/cmd/web /app/ui/html /app/ui/static/css /app/ui/static/img /app/ui/static/js
