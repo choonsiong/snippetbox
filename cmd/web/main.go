@@ -19,9 +19,9 @@ func main() {
 
 	// Initialize a new instance of application containing
 	// the dependencies.
-	app := &Application{
-		ErrorLog: errorLog,
-		InfoLog: infoLog,
+	app := &application{
+		errorLog: errorLog,
+		infoLog: infoLog,
 	}
 
 	flag.StringVar(&cfg.Addr, "addr", ":4000", "HTTP network address:port")

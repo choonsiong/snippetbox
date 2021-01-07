@@ -4,7 +4,7 @@ import "log"
 
 // Define an application struct to hold the application-wide
 // dependencies for the web application.
-type Application struct {
-	ErrorLog *log.Logger
-	InfoLog *log.Logger
+type application struct {
+	errorLog *log.Logger
+	infoLog *log.Logger
 }

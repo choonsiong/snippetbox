@@ -8,12 +8,12 @@ import (
 )
 
 // Define a home handler function
-func (app *Application) home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// Check if the current request URL path exactly  matches "/". If it
 	// doesn't, use the http.NotFound() function to send a 404 response
 	// to the client. We then return from the handler.
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 
@@ -34,8 +34,7 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles(files...)
 
 	if err != nil {
-		app.ErrorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		app.serveError(w, err)
 		return
 	}
 
@@ -45,12 +44,11 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	err = ts.Execute(w, nil)
 
 	if err != nil {
-		app.ErrorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		app.serveError(w, err)
 	}
 }
 
-func (app *Application) showSnippet(w http.ResponseWriter, r *http.Request) {
+func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	// Extract the value of the id parameter from the query string and try to
 	// convert it to an integer using the strconv.Atoi() function. If it can't
 	// be converted to an integer, or the value is less than 1, we return an 404
@@ -58,7 +56,7 @@ func (app *Application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 
@@ -66,7 +64,7 @@ func (app *Application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Display a specific snippet with ID %d... 🤔", id)
 }
 
-func (app *Application) createSnippet(w http.ResponseWriter, r *http.Request) {
+func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	// Use r.Method to check whether the request is using POST or not. Note
 	// that http.MethodPost is a constant equal to the string "POST".
 	if r.Method != "POST" {
@@ -84,10 +82,8 @@ func (app *Application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		//w.WriteHeader(405)
 		//w.Write([]byte("Method not allowed"))
 
-		// Use the http.Error() helper function to send a 405 status code
-		// and a string as the response body (instead of above two separate
-		// methods).
-		http.Error(w, "Method not allowed", 405)
+		// Use the clientError helper.
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
