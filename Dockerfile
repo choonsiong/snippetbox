@@ -28,6 +28,9 @@ COPY ui/static/js/main.js ui/static/js/main.js
 
 RUN set -ex; \
     /usr/local/go/bin/go build -o snippetbox cmd/web/*.go
+
+COPY docker_entrypoint.sh /docker_entrypoint.sh
+ENTRYPOINT ["/docker_entrypoint.sh"]
     
 EXPOSE 4000
 
