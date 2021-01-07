@@ -33,7 +33,7 @@ func main() {
 		infoLog.Printf("Environment variable $PORT is not defined, set http listening address to %v", cfg.Addr)
 		httpListenAddr = cfg.Addr
 	}
-	
+
 	// Initialize a new servemux
 	mux := http.NewServeMux()
 
@@ -51,12 +51,21 @@ func main() {
 	// "/static" prefix before the request reaches the file server.
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
+	// Initialize a new http.Server struct. Use the custom errorLog logger
+	// in the event of any problems.
+	httpServ := &http.Server {
+		Addr: httpListenAddr,
+		ErrorLog: errorLog,
+		Handler: mux,
+	}
+
 	//log.Printf("Starting server on %v", httpListenAddr)
 	infoLog.Printf("Starting server on %v", httpListenAddr)
 
 	// Note that any error returned by http.ListenAndServe() is always non-nil.
 	// :port will listen on all available network interfaces
-	err := http.ListenAndServe(httpListenAddr, mux)
+	//err := http.ListenAndServe(httpListenAddr, mux)
+	err := httpServ.ListenAndServe()
 	//log.Fatal(err)
 	errorLog.Fatal(err)
 }
