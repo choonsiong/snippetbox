@@ -9,6 +9,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"github.com/choonsiong/snippetbox/pkg/models/mysql"
 	"log"
 	"net/http"
 	"os"
@@ -17,6 +18,8 @@ import (
 )
 
 func main() {
+	cfg := new(config)
+
 	// Create a logger for writing information messages.
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
@@ -24,17 +27,10 @@ func main() {
 	// and line number.
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	// Initialize a new instance of application containing the dependencies.
-	app := &application{
-		config: new(config),
-		errorLog: errorLog,
-		infoLog: infoLog,
-	}
-
 	// Command-line arguments
-	flag.StringVar(&app.config.addr, "addr", ":4000", "HTTP network address:port")
-	flag.StringVar(&app.config.dsn, "dsn", "admin:pass@tcp(snippetbox_mysql_1:3306)/snippetbox?parseTime=true", "MySQL data source name")
-	flag.StringVar(&app.config.staticDir, "static-dir", "./ui/static", "Path to static assets")
+	flag.StringVar(&cfg.addr, "addr", ":4000", "HTTP network address:port")
+	flag.StringVar(&cfg.dsn, "dsn", "admin:pass@tcp(snippetbox_mysql_1:3306)/snippetbox?parseTime=true", "MySQL data source name")
+	flag.StringVar(&cfg.staticDir, "static-dir", "./ui/static", "Path to static assets")
 
 	flag.Parse()
 
@@ -46,18 +42,25 @@ func main() {
 	if port != "" {
 		httpListenAddr = ":" + port
 	} else {
-		infoLog.Printf("Environment variable $PORT is not defined, set http listening address to %v", app.config.addr)
-		httpListenAddr = app.config.addr
+		infoLog.Printf("Environment variable $PORT is not defined, set http listening address to %v", cfg.addr)
+		httpListenAddr = cfg.addr
 	}
 
 	// Setup database connection
-	db, err := openDB(app.config.dsn)
+	db, err := openDB(cfg.dsn)
 
 	if err != nil {
 		errorLog.Fatal(err)
 	}
 
 	defer db.Close()
+
+	// Initialize a new instance of application containing the dependencies.
+	app := &application{
+		errorLog: errorLog,
+		infoLog: infoLog,
+		snippets: &mysql.SnippetModel{DB: db},
+	}
 
 	// Initialize a new http.Server struct. Use the custom errorLog logger
 	// in the event of any problems.
