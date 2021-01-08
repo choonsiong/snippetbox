@@ -20,6 +20,7 @@ RUN set -ex; \
 
 # Copy snippetbox resources to the container
 WORKDIR /app
+COPY go.mod go.mod
 COPY cmd/web/*.go cmd/web/
 COPY ui/html/*.tmpl ui/html/
 COPY ui/static/css/main.css ui/static/css/main.css
@@ -27,6 +28,7 @@ COPY ui/static/img/* ui/static/img/
 COPY ui/static/js/main.js ui/static/js/main.js
 
 RUN set -ex; \
+    /usr/local/go/bin/go get github.com/go-sql-driver/mysql@v1; \
     /usr/local/go/bin/go build -o snippetbox cmd/web/*.go
 
 COPY docker_entrypoint.sh /docker_entrypoint.sh

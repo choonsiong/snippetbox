@@ -7,10 +7,13 @@ package main
 */
 
 import (
+	"database/sql"
 	"flag"
 	"log"
 	"net/http"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -28,7 +31,9 @@ func main() {
 		infoLog: infoLog,
 	}
 
+	// Command-line arguments
 	flag.StringVar(&app.config.addr, "addr", ":4000", "HTTP network address:port")
+	flag.StringVar(&app.config.dsn, "dsn", "admin:pass@tcp(snippetbox_mysql_1:3306)/snippetbox?parseTime=true", "MySQL data source name")
 	flag.StringVar(&app.config.staticDir, "static-dir", "./ui/static", "Path to static assets")
 
 	flag.Parse()
@@ -45,6 +50,15 @@ func main() {
 		httpListenAddr = app.config.addr
 	}
 
+	// Setup database connection
+	db, err := openDB(app.config.dsn)
+
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
+	defer db.Close()
+
 	// Initialize a new http.Server struct. Use the custom errorLog logger
 	// in the event of any problems.
 	httpServ := &http.Server{
@@ -59,7 +73,23 @@ func main() {
 	// Note that any error returned by http.ListenAndServe() is always non-nil.
 	// :port will listen on all available network interfaces
 	//err := http.ListenAndServe(httpListenAddr, mux)
-	err := httpServ.ListenAndServe()
+	err = httpServ.ListenAndServe()
 	//log.Fatal(err)
 	errorLog.Fatal(err)
+}
+
+// The OpenDB() function wraps sql.Open() and returns a sql.DB connection
+// pool for a given DSN.
+func openDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dsn)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
