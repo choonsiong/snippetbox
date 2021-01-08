@@ -1,3 +1,9 @@
+### Before running `docker-compose up` for the first time
+
+You need to create a `mysql_password.txt` file for your MySQL root user inside your application root folder.
+
+e.g. `$ echo password > mysql_password.txt`
+
 ### Running `docker-compose up` for the first time
 
 The application will failed because the database required is not created yet.
