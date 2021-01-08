@@ -33,8 +33,8 @@ INSERT INTO snippets (title, content, created, expires) VALUES (
     DATE_ADD(UTC_TIMESTAMP(), INTERVAL 7 DAY)
 );
 
-CREATE USER 'admin'@'localhost';
+CREATE USER 'admin'@'%';
 
 GRANT SELECT, INSERT, UPDATE ON snippetbox.* TO 'admin'@'%';
 
-ALTER USER 'admin'@'localhost' IDENTIFIED BY 'pass';
+ALTER USER 'admin'@'%' IDENTIFIED BY 'pass';
