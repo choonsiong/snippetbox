@@ -129,3 +129,6 @@ mysql_1       | Version: '5.7.32'  socket: '/var/run/mysqld/mysqld.sock'  port: 
 snippetbox_1  | INFO	2021/01/08 12:31:10 Environment variable $PORT is not defined, set http listening address to :4000
 snippetbox_1  | INFO	2021/01/08 12:31:10 Starting server on :4000
 ```
+> Note
+> 
+> If you are running `docker-compose up` for the first time, it is also possible that the MySQL taking longer than 10 seconds (the application is waiting for 10 sec for MySQL start up) to start up and therefore the application will display different error. But since it is first time running `docker-compose up`, you still need to perform above steps to create the database then stop and start the containers again.
