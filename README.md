@@ -5,8 +5,14 @@ A simple Go web application.
 > Note:
 >
 > This repository is link to Docker Hub and is automatically build after `git push`
+> 
+> The image in Docker Hub is not "usable" now, use `git clone` to clone the repository and run `docker-compose` instead.
 
 ### To run the container using `docker container run`
+
+> Note:
+> 
+> Use `docker-compose up` because it will build the MySQL container together, else the application won't function properly. 
 
 ```
  4:47:59 361  docker container run --name snippetbox -p 4000:4000 choonsiong/snippetbox
