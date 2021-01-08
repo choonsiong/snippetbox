@@ -67,7 +67,7 @@ func main() {
 	httpServ := &http.Server{
 		Addr:     httpListenAddr,
 		ErrorLog: errorLog,
-		Handler:  app.routes(),
+		Handler:  app.routes(cfg.staticDir),
 	}
 
 	//log.Printf("Starting server on %v", httpListenAddr)

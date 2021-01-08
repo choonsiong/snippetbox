@@ -3,10 +3,10 @@ FROM ubuntu:20.04
 ENV GO_INSTALL_DIR=/usr/local/go
 
 RUN set -ex; \
-    apt-get update && apt-get install -y curl iproute2 iputils-ping vim wget; \
+    apt-get update && apt-get install -y curl git iproute2 iputils-ping vim wget; \
     apt-get clean; \
     mkdir -p "$HOME/go/src" "$HOME"/go/pkg "$HOME"/go/bin; \
-    mkdir -p /app /app/cmd/web /app/ui/html /app/ui/static/css /app/ui/static/img /app/ui/static/js
+    mkdir -p /app /app/cmd/web /app/ui/html /app/ui/static/css /app/ui/static/img /app/ui/static/js /app/pkg/models/mysql
 
 # Install Go
 WORKDIR /usr/local
@@ -22,6 +22,8 @@ RUN set -ex; \
 WORKDIR /app
 COPY go.mod go.mod
 COPY cmd/web/*.go cmd/web/
+COPY pkg/models/models.go pkg/models/models.go
+COPY pkg/models/mysql/snippets.go pkg/models/mysql/snippets.go
 COPY ui/html/*.tmpl ui/html/
 COPY ui/static/css/main.css ui/static/css/main.css
 COPY ui/static/img/* ui/static/img/
