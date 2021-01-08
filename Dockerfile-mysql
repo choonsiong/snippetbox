@@ -3,3 +3,7 @@ FROM mysql:5.7
 RUN set -ex; \
     apt-get update && apt-get install -y curl iproute2 iputils-ping vim wget; \
     apt-get clean;
+
+WORKDIR /root
+
+COPY setup_mysql.sql setup_mysql.sql
