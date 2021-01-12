@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 
@@ -21,11 +22,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	// Initialize a slice containing the paths to the files. Note that the
 	// home.page.tmpl file must be the *first* file in the slice.
-	/*files := []string {
+	files := []string{
 		"./ui/html/home.page.tmpl",
 		"./ui/html/base.layout.tmpl",
 		"./ui/html/footer.partial.tmpl",
-	}*/
+	}
 
 	// Use the template.ParseFiles() function to read the files and store the templates
 	// in a template set. Notice that we can pass the slice of file paths as a
@@ -33,33 +34,33 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// If there's an error, we log the detailed error message
 	// and use the http.Error() function to send a generic 500 Internal Server
 	// Error response to the user.
-	/*ts, err := template.ParseFiles(files...)
+	ts, err := template.ParseFiles(files...)
 
 	if err != nil {
 		app.serveError(w, err)
 		return
-	}*/
+	}
 
 	// Then use the Execute() method on the template set to write the template
 	// content as the response body. The last parameter to Execute() represents
 	// any dynamic data that we want to pass in, which for now we'll leave as nil.
-	/*err = ts.Execute(w, nil)
+	err = ts.Execute(w, nil)
 
 	if err != nil {
 		app.serveError(w, err)
-	}*/
+	}
 
 	// Test
-	s, err := app.snippets.Latest()
-
-	if err != nil {
-		app.serveError(w, err)
-		return
-	}
-
-	for _, snippet := range s {
-		fmt.Fprintf(w, "%v\n", snippet)
-	}
+	//s, err := app.snippets.Latest()
+	//
+	//if err != nil {
+	//	app.serveError(w, err)
+	//	return
+	//}
+	//
+	//for _, snippet := range s {
+	//	fmt.Fprintf(w, "%v\n", snippet)
+	//}
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
@@ -88,12 +89,34 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	files := []string {
+		"./ui/html/show.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+
+	// Parse the template files
+	ts, err := template.ParseFiles(files...)
+
+	if err != nil {
+		app.serveError(w, err)
+		return
+	}
+
+	// Notice how we are passing in the snippet data (a models.Snippet struct)
+	// as the final parameter.
+	err = ts.Execute(w, s)
+
+	if err != nil {
+		app.serveError(w, err)
+	}
+
 	//w.Write([]byte("Display a specific snippet..."))
 	//fmt.Fprintf(w, "Display a specific snippet with ID %d... 🤔", id)
 
 	// Write the snippet data as a plain-text HTTP response body.
-	app.infoLog.Printf("%v", s)
-	fmt.Fprintf(w, "%v", s)
+	//app.infoLog.Printf("%v", s)
+	//fmt.Fprintf(w, "%v", s)
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
