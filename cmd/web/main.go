@@ -51,7 +51,7 @@ const contextKeyIsAuthenticated = contextKey("isAuthenticated")
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dsn", "root:password@/snippetbox?parseTime=true", "MySQL data source name")
+	dsn := flag.String("dsn", "mysql:mysql@/snippetbox?parseTime=true", "MySQL data source name")
 	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key") // 32 bytes random key to encrypt and authenticate session cookies
 	debug := flag.Bool("debug", false, "Enable debug mode")
 
