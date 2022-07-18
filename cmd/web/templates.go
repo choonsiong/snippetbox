@@ -1,0 +1,152 @@
+package main
+
+import (
+	"github.com/choonsiong/snippetbox/pkg/forms"
+	"github.com/choonsiong/snippetbox/pkg/models"
+	"github.com/choonsiong/snippetbox/ui"
+	"html/template"
+	"io/fs"
+	"path/filepath"
+	"time"
+)
+
+// templateData type is a holding structure for any
+// dynamic data that we want to pass to our HTML templates.
+type templateData struct {
+	CSRFToken string
+	CurrentYear int
+	Flash string
+	Form *forms.Form
+	//FormData url.Values
+	//FormErrors map[string]string
+	IsAuthenticated bool
+	Snippet *models.Snippet
+	Snippets []*models.Snippet
+	User *models.User
+}
+
+func humanDate(t time.Time) string {
+	// Return the empty string if time has the zero value.
+	if t.IsZero() {
+		return ""
+	}
+
+	// Convert the time to UTC before formatting it.
+	return t.UTC().Format("02 Jan 2006 at 15:04")
+}
+
+var functions = template.FuncMap{
+	"humanDate": humanDate,
+}
+
+//func newTemplateCache(dir string) (map[string]*template.Template, error) {
+//	// Initialize a new map to act as the cache
+//	cache := map[string]*template.Template{}
+//
+//	// Get a slice of all the 'page' templates
+//	pages, err := filepath.Glob(filepath.Join(dir, "*.page.tmpl"))
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	// Loop through the pages one by one
+//	for _, page := range pages {
+//		// Extract the filename
+//		name := filepath.Base(page)
+//
+//		// Create an empty template set and register the template.FuncMap,
+//		// then parse the page template file as normal
+//		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
+//		if err != nil {
+//			return nil, err
+//		}
+//
+//		// Add any 'layout' templates to the template set
+//		ts, err = ts.ParseGlob(filepath.Join(dir, "*.layout.tmpl"))
+//		if err != nil {
+//			return nil, err
+//		}
+//
+//		// Add any 'partial' templates to the template set
+//		ts, err = ts.ParseGlob(filepath.Join(dir, "*.partial.tmpl"))
+//		if err != nil {
+//			return nil, err
+//		}
+//
+//		// Add the template set to the cache, using the name of the page
+//		// as the key
+//		cache[name] = ts
+//	}
+//
+//	return cache, nil
+//}
+
+func newTemplateCache() (map[string]*template.Template, error) {
+	// Initialize a new map to act as the cache
+	cache := map[string]*template.Template{}
+
+	// Get a slice of all the 'page' templates
+	//pages, err := filepath.Glob(filepath.Join(dir, "*.page.tmpl"))
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	// Use fs.Glob() to get a slice of all filepaths in the ui.Files embedded filesystem
+	// which match the pattern 'html/*.page.tmpl'. This essentially gives us a slice of
+	// all the 'page' templates for the application, just like before.
+	pages, err := fs.Glob(ui.Files, "html/*.page.tmpl")
+	if err != nil {
+		return nil, err
+	}
+
+
+	// Loop through the pages one by one
+	for _, page := range pages {
+		// Extract the filename
+		name := filepath.Base(page)
+
+		// Create an empty template set and register the template.FuncMap,
+		// then parse the page template file as normal
+		//ts, err := template.New(name).Funcs(functions).ParseFiles(page)
+		//if err != nil {
+		//	return nil, err
+		//}
+
+		// Use the ParseFS() method to parse a specific page template from the ui.Files
+		// embedded filesystem.
+		ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, page)
+		if err != nil {
+			return nil, err
+		}
+
+		// Add any 'layout' templates to the template set
+		//ts, err = ts.ParseGlob(filepath.Join(dir, "*.layout.tmpl"))
+		//if err != nil {
+		//	return nil, err
+		//}
+
+		// Use ParseFS() again to add any 'layout' templates to the template set.
+		ts, err = ts.ParseFS(ui.Files, "html/*.layout.tmpl")
+		if err != nil {
+			return nil, err
+		}
+
+		// Add any 'partial' templates to the template set
+		//ts, err = ts.ParseGlob(filepath.Join(dir, "*.partial.tmpl"))
+		//if err != nil {
+		//	return nil, err
+		//}
+
+		// Likewise use ParseFS() to add any 'partial' templates to the template set.
+		ts, err = ts.ParseFS(ui.Files, "html/*.partial.tmpl")
+		if err != nil {
+			return nil, err
+		}
+
+		// Add the template set to the cache, using the name of the page
+		// as the key
+		cache[name] = ts
+	}
+
+	return cache, nil
+}
