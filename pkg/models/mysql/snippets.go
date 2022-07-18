@@ -1,3 +1,23 @@
+/*
+MIT License
+Copyright (c) 2022 Lee Choon Siong
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package mysql
 
 import (
@@ -34,19 +54,12 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets WHERE expires > UTC_TIMESTAMP() AND id = ?`
 
-	// This returns a pointer to a sql.Row object which holds the result
-	// from the database.
 	row := m.DB.QueryRow(stmt, id)
 
-	// Initialize a pointer to a new zeroed Snippet struct.
 	s := &models.Snippet{}
 
-	// Copy the values from each field in sql.Row to the corresponding field
-	// in the Snippet struct.
 	err := row.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
 	if err != nil {
-		// If the query returns no rows, then row.Scan() will return a
-		// sql.ErrNoRows error.
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNoRecord
 		} else {
@@ -60,8 +73,6 @@ func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets WHERE expires > UTC_TIMESTAMP() ORDER BY created DESC LIMIT 10`
 
-	// This returns a sql.Rows resultset containing the result
-	// of our query.
 	rows, err := m.DB.Query(stmt)
 	if err != nil {
 		return nil, err
@@ -69,10 +80,8 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 
 	defer rows.Close()
 
-	// An empty slice to hold the models.Snippet objects
 	snippets := []*models.Snippet{}
 
-	// Iterate through the rows in the resultset.
 	for rows.Next() {
 		s := &models.Snippet{}
 
@@ -84,8 +93,6 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 		snippets = append(snippets, s)
 	}
 
-	// It is important to check for any error that was encountered
-	// during the iteration.
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}

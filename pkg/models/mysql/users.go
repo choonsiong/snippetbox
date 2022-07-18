@@ -1,3 +1,23 @@
+/*
+MIT License
+Copyright (c) 2022 Lee Choon Siong
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package mysql
 
 import (
@@ -21,7 +41,6 @@ type UserInterface interface {
 }
 
 func (m *UserModel) Insert(name, email, password string) error {
-	// Create a bcrypt hash of the plain-text password.
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		return err
@@ -51,9 +70,6 @@ func (m *UserModel) Insert(name, email, password string) error {
 }
 
 func (m *UserModel) Authenticate(email, password string) (int, error) {
-	// Retrieve the id and hashed password associated with the given email. If no
-	// matching email exists, or the user is not active, we return the
-	// ErrInvalidCredentials error.
 	var id int
 	var hashedPassword []byte
 
@@ -68,8 +84,6 @@ func (m *UserModel) Authenticate(email, password string) (int, error) {
 		}
 	}
 
-	// Check whether the hashed password and plain-text password provided match.
-	// If they don't, we return the ErrInvalidCredentials error.
 	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(password))
 	if err != nil {
 		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {

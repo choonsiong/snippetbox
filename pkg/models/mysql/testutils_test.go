@@ -1,3 +1,23 @@
+/*
+MIT License
+Copyright (c) 2022 Lee Choon Siong
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package mysql
 
 import (
@@ -6,21 +26,12 @@ import (
 	"testing"
 )
 
-// Creates a new *sql.DB connection pool for the test database.
-// Executes the setup.sql script to create the database tables and dummy data.
-// Returns an anonymous function which executes the teardown.sql script and closes the connection pool.
 func newTestDB(t *testing.T) (*sql.DB, func()) {
-	// Establish a sql.DB connection pool for our test database. Because our
-	// setup and teardown scripts contains multiple SQL statements, we need
-	// to use the `multiStatements=true` parameter in our DSN. This instructs
-	// our MySQL database driver to support executing multiple SQL statements
-	// in one db.Exec() call.
 	db, err := sql.Open("mysql", "root:password@/test_snippetbox?parseTime=true&multiStatements=true")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Read the setup SQL script from file and execute the statements.
 	script, err := os.ReadFile("./testdata/setup.sql")
 	if err != nil {
 		t.Fatal(err)
@@ -30,10 +41,6 @@ func newTestDB(t *testing.T) (*sql.DB, func()) {
 		t.Fatal(err)
 	}
 
-	// Return the connection pool and an anonymous function which reads and
-	// executes the teardown script, and closes the connection pool. We can
-	// assign this anonymous function and call it later once our test has
-	// completed.
 	return db, func() {
 		script, err := os.ReadFile("./testdata/teardown.sql")
 		if err != nil {
