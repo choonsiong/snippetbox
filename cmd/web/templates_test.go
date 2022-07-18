@@ -1,3 +1,23 @@
+/*
+MIT License
+Copyright (c) 2022 Lee Choon Siong
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package main
 
 import (
@@ -6,36 +26,29 @@ import (
 )
 
 func TestHumanDate(t *testing.T) {
-	// Create a slice of anonymous structs containing the test case name,
-	// input to our humanDate() function (the tm field), and expected output
-	// (the want field).
 	tests := []struct {
 		name string
-		tm time.Time
+		tm   time.Time
 		want string
 	}{
 		{
 			name: "UTC",
-			tm: time.Date(2020, 12, 17, 10, 0, 0, 0, time.UTC),
+			tm:   time.Date(2020, 12, 17, 10, 0, 0, 0, time.UTC),
 			want: "17 Dec 2020 at 10:00",
 		},
 		{
 			name: "Empty",
-			tm: time.Time{},
+			tm:   time.Time{},
 			want: "",
 		},
 		{
 			name: "CET",
-			tm: time.Date(2020,12, 17, 10, 0, 0, 0, time.FixedZone("CET", 1*60*60)), // CET is UTC+01:00
+			tm:   time.Date(2020, 12, 17, 10, 0, 0, 0, time.FixedZone("CET", 1*60*60)), // CET is UTC+01:00
 			want: "17 Dec 2020 at 09:00",
 		},
 	}
 
 	for _, tt := range tests {
-		// Use the t.Run() function to run a sub-test for each test case. The
-		// first parameter to this is the name of the test (which is used to
-		// identify the sub-test in any log output) and the second parameter is
-		// and anonymous function containing the actual test for each case.
 		t.Run(tt.name, func(t *testing.T) {
 			hd := humanDate(tt.tm)
 
