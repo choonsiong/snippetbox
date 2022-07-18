@@ -35,8 +35,6 @@ import (
 	"time"
 )
 
-// Define a regular expression which captures the CSRF token value from the
-// HTML for our user signup page.
 var csrfTokenRX = regexp.MustCompile(`<input type="hidden" name="csrf_token" value='(.+)'>`)
 
 func extractCSRFToken(t *testing.T, body []byte) string {
@@ -52,10 +50,7 @@ func extractCSRFToken(t *testing.T, body []byte) string {
 	return html.UnescapeString(string(matches[1]))
 }
 
-// Create a newTestApplication helper which returns an instance of our
-// application struct containing mocked dependencies.
 func newTestApplication(t *testing.T) *application {
-	// Create an instance of the template cache
 	// When we run tests with go test the current working directory will be set
 	// to the package directory for the currently executing test. So, if we're
 	// reading in any files as part of our tests, we need to make sure that the
@@ -66,13 +61,10 @@ func newTestApplication(t *testing.T) *application {
 		t.Fatal(err)
 	}
 
-	// Create a session manager instance, with the same settings as production.
 	session := sessions.New([]byte("s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge"))
 	session.Lifetime = 12 * time.Hour
 	session.Secure = true
 
-	// Initialize the dependencies, using the mocks for the loggers and database
-	// models.
 	return &application{
 		errorLog:      log.New(io.Discard, "", 0),
 		infoLog:       log.New(io.Discard, "", 0),
@@ -83,8 +75,6 @@ func newTestApplication(t *testing.T) *application {
 	}
 }
 
-// Define a custom testServer type which anonymously embeds a httptest.Server
-// instance.
 type testServer struct {
 	*httptest.Server
 }
@@ -94,7 +84,6 @@ type testServer struct {
 func newTestServer(t *testing.T, h http.Handler) *testServer {
 	ts := httptest.NewTLSServer(h)
 
-	// Initialize a new cookie jar.
 	jar, err := cookiejar.New(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -142,13 +131,11 @@ func (ts *testServer) postForm(t *testing.T, urlPath string, form url.Values) (i
 		t.Fatal(err)
 	}
 
-	// Read the response body.
 	defer rs.Body.Close()
 	body, err := io.ReadAll(rs.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	// Return the response status, headers and body.
+	
 	return rs.StatusCode, rs.Header, body
 }
