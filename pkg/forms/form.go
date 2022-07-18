@@ -1,3 +1,23 @@
+/*
+MIT License
+Copyright (c) 2022 Lee Choon Siong
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package forms
 
 import (
@@ -8,9 +28,6 @@ import (
 	"unicode/utf8"
 )
 
-// Create a custom Form struct, which anonymously embeds a url.Values
-// object (to hold the form data) and an Errors field to hold any
-// validation errors for the form data.
 type Form struct {
 	url.Values
 	Errors errors
@@ -25,9 +42,6 @@ func New(data url.Values) *Form {
 	}
 }
 
-// Check that specific fields in the form data are present and
-// not blank. If any fields fail this check, add the appropriate
-// message to the form errors.
 func (f *Form) Required(fields ...string) {
 	for _, field := range fields {
 		value := f.Get(field)
@@ -68,8 +82,6 @@ func (f *Form) MinLength(field string, d int) {
 	}
 }
 
-// Check that a specific field in the form matches one of a set
-// of specific permitted values.
 func (f *Form) PermittedValues(field string, opts ...string) {
 	value := f.Get(field)
 
