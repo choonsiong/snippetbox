@@ -1,3 +1,23 @@
+/*
+MIT License
+Copyright (c) 2022 Lee Choon Siong
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package main
 
 import (
@@ -10,15 +30,11 @@ import (
 	"time"
 )
 
-// templateData type is a holding structure for any
-// dynamic data that we want to pass to our HTML templates.
 type templateData struct {
-	CSRFToken   string
-	CurrentYear int
-	Flash       string
-	Form        *forms.Form
-	//FormData url.Values
-	//FormErrors map[string]string
+	CSRFToken       string
+	CurrentYear     int
+	Flash           string
+	Form            *forms.Form
 	IsAuthenticated bool
 	Snippet         *models.Snippet
 	Snippets        []*models.Snippet
@@ -30,7 +46,6 @@ func humanDate(t time.Time) string {
 		return ""
 	}
 
-	// Convert the time to UTC before formatting it.
 	return t.UTC().Format("02 Jan 2006 at 15:04")
 }
 
@@ -39,7 +54,6 @@ var functions = template.FuncMap{
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
-	// Initialize a new map to act as the cache
 	cache := map[string]*template.Template{}
 
 	// Use fs.Glob() to get a slice of all filepaths in the ui.Files embedded filesystem
@@ -50,9 +64,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		return nil, err
 	}
 
-	// Loop through the pages one by one
 	for _, page := range pages {
-		// Extract the filename
 		name := filepath.Base(page)
 
 		// Use the ParseFS() method to parse a specific page template from the ui.Files
@@ -73,9 +85,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		// Add the template set to the cache, using the name of the page
-		// as the key
+		
 		cache[name] = ts
 	}
 
