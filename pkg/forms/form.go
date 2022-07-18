@@ -18,7 +18,6 @@ type Form struct {
 
 var EmailRX = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
-// Initialize a custom Form struct.
 func New(data url.Values) *Form {
 	return &Form{
 		data,
@@ -87,7 +86,6 @@ func (f *Form) PermittedValues(field string, opts ...string) {
 	f.Errors.Add(field, "This field is invalid")
 }
 
-// Returns true if there are no errors.
 func (f *Form) Valid() bool {
 	return len(f.Errors) == 0
 }

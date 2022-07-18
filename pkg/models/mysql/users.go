@@ -20,7 +20,6 @@ type UserInterface interface {
 	ChangePassword(int, string, string) error
 }
 
-// Insert adds a new record to the user table.
 func (m *UserModel) Insert(name, email, password string) error {
 	// Create a bcrypt hash of the plain-text password.
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
@@ -51,8 +50,6 @@ func (m *UserModel) Insert(name, email, password string) error {
 	return nil
 }
 
-// Authenticate verifies whether a user exists with the provided email address
-// and password, and return the relevant user ID if they do.
 func (m *UserModel) Authenticate(email, password string) (int, error) {
 	// Retrieve the id and hashed password associated with the given email. If no
 	// matching email exists, or the user is not active, we return the
@@ -82,11 +79,9 @@ func (m *UserModel) Authenticate(email, password string) (int, error) {
 		}
 	}
 
-	// Otherwise, the password is correct. Return the user ID.
 	return id, nil
 }
 
-// Get fetches details for a specific user based on their user ID.
 func (m *UserModel) Get(id int) (*models.User, error) {
 	u := &models.User{}
 
@@ -119,7 +114,6 @@ func (m *UserModel) ChangePassword(id int, currentPassword, newPassword string) 
 			return err
 		}
 	}
-
 
 	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
 	if err != nil {

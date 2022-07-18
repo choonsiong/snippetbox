@@ -6,7 +6,6 @@ import (
 	"github.com/choonsiong/snippetbox/pkg/models"
 )
 
-// Define a SnippetModel type which wraps a sql.DB connection pool.
 type SnippetModel struct {
 	DB *sql.DB
 }
@@ -17,7 +16,6 @@ type SnippetInterface interface {
 	Latest() ([]*models.Snippet, error)
 }
 
-// This will insert a snippet into the database.
 func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 	stmt := `INSERT INTO snippets (title, content, created, expires) VALUES (?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
 	result, err := m.DB.Exec(stmt, title, content, expires)
@@ -33,7 +31,6 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 	return int(id), nil
 }
 
-// This will return a specific snippet based on its id.
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets WHERE expires > UTC_TIMESTAMP() AND id = ?`
 
@@ -60,7 +57,6 @@ func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	return s, nil
 }
 
-// This will return the 10 most recently created snippets.
 func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets WHERE expires > UTC_TIMESTAMP() ORDER BY created DESC LIMIT 10`
 
@@ -96,4 +92,3 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 
 	return snippets, nil
 }
-

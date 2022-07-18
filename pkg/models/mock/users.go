@@ -8,16 +8,15 @@ import (
 // Create a simple struct which implements the same methods as our production
 // mysql.UserModel, but have the methods return some fixed dummy data
 // instead.
-
 var mockUser = &models.User{
-	ID: 1,
-	Name: "Alice",
-	Email: "alice@example.com",
+	ID:      1,
+	Name:    "Alice",
+	Email:   "alice@example.com",
 	Created: time.Now(),
-	Active: true,
+	Active:  true,
 }
 
-type UserModel struct {}
+type UserModel struct{}
 
 func (m *UserModel) Insert(name, email, password string) error {
 	switch email {

@@ -4,7 +4,6 @@ package forms
 // The name of the form field will be used as the key in this map.
 type errors map[string][]string
 
-// Add error messages for a given field to the map.
 func (e errors) Add(field, message string) {
 	e[field] = append(e[field], message)
 }
@@ -20,5 +19,3 @@ func (e errors) Get(field string) string {
 
 	return es[0]
 }
-
-
