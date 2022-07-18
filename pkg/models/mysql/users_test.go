@@ -1,3 +1,23 @@
+/*
+MIT License
+Copyright (c) 2022 Lee Choon Siong
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package mysql
 
 import (
@@ -48,25 +68,17 @@ func TestUserModelGet(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Initialize a connection pool to our test database, and defer a
-			// call to the teardown function, so it is always run immediately
-			// before this sub-test returns.
 			db, teardown := newTestDB(t)
 			defer teardown()
 
-			// Create a new instance of the UserModel.
 			m := UserModel{db}
 
-			// Call the UserModel.Get() method and check that the return value
-			// and error match the expected values for the sub-test.
 			user, err := m.Get(tt.userID)
 
 			if err != tt.wantError {
 				t.Errorf("want %v; got %s", tt.wantError, err)
 			}
 
-			// Using the reflect.DeepEqual() function, like we are in the code below,
-			// is an effective way to check for equality between arbitrarily complex custom types.
 			if !reflect.DeepEqual(user, tt.wantUser) {
 				t.Errorf("want %v; got %v", tt.wantUser, user)
 			}
