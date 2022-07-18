@@ -29,7 +29,6 @@ import (
 	"net/http"
 )
 
-// Use a customized CSRF cookie with the Secure, Path and HttpOnly flags set.
 func noSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
 
@@ -42,32 +41,22 @@ func noSurf(next http.Handler) http.Handler {
 	return csrfHandler
 }
 
-// The X-Frame-Options and X-XSS-Protection instruct the user's web browser
-// to implement additional security measures to help prevent XSS and clickjacking attacks.
 func secureHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Any code here will execute on the way down the chain
 		w.Header().Set("X-XSS-Protection", "1; mode=block")
 		w.Header().Set("X-Frame-Options", "deny")
 		next.ServeHTTP(w, r)
-		// Any code here will execute on the way back up the chain
 	})
 }
 
 func (app *application) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Check if a authenticatedUserID value exists in the session. If this
-		// isn't present then call the next handler in the chain as normal.
 		exists := app.session.Exists(r, "authenticatedUserID")
 		if !exists {
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		// Fetch the details of the current user from the database. If no matching record
-		// found, or the current user is has been deactivated, remove the (invalid)
-		// authenticatedUserID value from their session and call the next handler in
-		// the chain as normal.
 		user, err := app.users.Get(app.session.GetInt(r, "authenticatedUserID"))
 		if errors.Is(err, models.ErrNoRecord) || !user.Active {
 			app.session.Remove(r, "authenticatedUserID")
@@ -78,10 +67,6 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		// Otherwise, we know that the request is coming from an active, authenticated,
-		// user. We create a new copy of the request, with a true boolen value added to the
-		// request context to indicate this, and call the next handler in the chain using
-		// this new copy of the request.
 		ctx := context.WithValue(r.Context(), contextKeyIsAuthenticated, true)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -100,9 +85,7 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 		// of a panic as Go unwinds the stack.
 		defer func() {
 			if err := recover(); err != nil {
-				// Set a "Connection: close" header on the response
 				w.Header().Set("Connection", "close")
-				// Return a 500 Internal Server Error
 				app.serverError(w, fmt.Errorf("%s", err))
 			}
 		}()
