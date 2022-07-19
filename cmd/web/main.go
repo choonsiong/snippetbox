@@ -34,6 +34,9 @@ func main() {
 	dsn := flag.String("dsn", "admin:password@/snippetbox?parseTime=true", "MySQL data source name")
 	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key") // 32 bytes random key to encrypt and authenticate session cookies
 	debug := flag.Bool("debug", false, "Enable debug mode")
+	// Note: HTTPS is required for this application to work properly,
+	// but it might not be needed in production environment when the server
+	// is behind another proxy which might have https enabled.
 	https := flag.Bool("https", false, "Enable HTTPS")
 
 	flag.Parse()
