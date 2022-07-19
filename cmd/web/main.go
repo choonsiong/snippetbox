@@ -34,6 +34,7 @@ func main() {
 	dsn := flag.String("dsn", "admin:password@/snippetbox?parseTime=true", "MySQL data source name")
 	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key") // 32 bytes random key to encrypt and authenticate session cookies
 	debug := flag.Bool("debug", false, "Enable debug mode")
+	https := flag.Bool("https", false, "Enable HTTPS")
 
 	flag.Parse()
 
@@ -82,8 +83,13 @@ func main() {
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
-	//err = srv.ListenAndServe()
-	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+
+	if *https {
+		err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	} else {
+		err = srv.ListenAndServe()
+	}
+
 	errorLog.Fatal(err)
 }
 
